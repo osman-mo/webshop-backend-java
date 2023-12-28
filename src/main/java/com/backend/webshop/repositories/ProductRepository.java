@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 public class ProductRepository {
@@ -36,30 +37,24 @@ public class ProductRepository {
 
     public List<ProductResponse> findAll(String tag){
 
-        if(tag == null || tag.isEmpty())
+        if(tag == null)
             return products;
 
         else {
-            tag = tag.toLowerCase();
+            String lowercaseTag = tag.toLowerCase();
 
-            List<ProductResponse> filtered = new ArrayList<>();
-
-            for (ProductResponse p : products) {
-
-                if (lowercaseTags(p).contains(tag))
-                    filtered.add(p);
-            }
-
-            return filtered;
+            return  products.stream()
+                    .filter(p -> lowercaseTags(p).contains(lowercaseTag))
+                    .collect(Collectors.toList());
         }
     }
 
     private static List<String> lowercaseTags(ProductResponse p) {
-        List<String> lowerCaseTags = new ArrayList<>();
-        for(String t : p.getTags()){
-            lowerCaseTags.add(t.toLowerCase());
-        }
-        return lowerCaseTags;
+        List<String> tags = p.getTags();
+
+        return tags.stream()
+                .map(tag -> tag.toLowerCase())
+                .collect(Collectors.toList());
     }
 
 }
