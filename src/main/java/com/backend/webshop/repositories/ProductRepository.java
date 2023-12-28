@@ -1,7 +1,6 @@
 package com.backend.webshop.repositories;
 
 import com.backend.webshop.model.ProductResponse;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
@@ -37,7 +36,7 @@ public class ProductRepository {
 
     public List<ProductResponse> findAll(String tag){
 
-        if(tag == null || tag == "")
+        if(tag == null || tag.isEmpty())
             return products;
 
         else {
