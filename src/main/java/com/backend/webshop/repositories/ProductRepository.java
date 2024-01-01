@@ -1,49 +1,53 @@
 package com.backend.webshop.repositories;
 
+import com.backend.webshop.model.ProductCreateRequest;
 import com.backend.webshop.model.ProductResponse;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
 public class ProductRepository {
 
-    List<ProductResponse> products = Arrays.asList(
-            new ProductResponse(
-                    "1",
-                    "AMD Ryzen 9 5950X",
-                    "very good gpu",
-                    79900,
-                    Arrays.asList("AMD", "GPU", "Processor")
-            ),
-            new ProductResponse(
-                    "2",
-                    "INtel Core 19-9900KF",
-                    "good gpu",
-                    33900,
-                    Arrays.asList("Intel", "GPU", "Processor")
-            ),
-            new ProductResponse(
-                    "3",
-                    "NVIDIA GeForce GTX 1080 Ti Black Edition 11GB",
-                    "very good gpu",
-                    74900,
-                    Arrays.asList("NVIDIA", "GPU", "Processor")
-            )
-    );
+    List<ProductResponse> products = new ArrayList<>();
 
-    public List<ProductResponse> findAll(String tag){
+    public ProductRepository() {
+        products.add(
+                new ProductResponse(
+                        "1",
+                        "AMD Ryzen 9 5950X",
+                        "very good gpu",
+                        79900,
+                        Arrays.asList("AMD", "GPU", "Processor")
+                ));
+        products.add(
+                new ProductResponse(
+                        "2",
+                        "INtel Core 19-9900KF",
+                        "good gpu",
+                        33900,
+                        Arrays.asList("Intel", "GPU", "Processor")
+                ));
+        products.add(
+                new ProductResponse(
+                        "3",
+                        "NVIDIA GeForce GTX 1080 Ti Black Edition 11GB",
+                        "very good gpu",
+                        74900,
+                        Arrays.asList("NVIDIA", "GPU", "Processor")
+                ));
+    }
 
-        if(tag == null)
+    public List<ProductResponse> findAll(String tag) {
+
+        if (tag == null)
             return products;
 
         else {
             String lowercaseTag = tag.toLowerCase();
 
-            return  products.stream()
+            return products.stream()
                     .filter(p -> lowercaseTags(p).contains(lowercaseTag))
                     .collect(Collectors.toList());
         }
@@ -57,4 +61,29 @@ public class ProductRepository {
                 .collect(Collectors.toList());
     }
 
+    public Optional<ProductResponse> findById(String id) {
+        Optional<ProductResponse> product = products.stream()
+                .filter(p -> p.getId().equals(id))
+                .findFirst();
+        return product;
+    }
+
+    public void deleteById(String id) {
+        this.products = products.stream()
+                .filter(p -> !p.getId().equals(id))
+                .collect(Collectors.toList());
+
+    }
+
+    public ProductResponse save(ProductCreateRequest request) {
+        ProductResponse response = new ProductResponse(
+                UUID.randomUUID().toString(),
+                request.getName(),
+                request.getDescription(),
+                request.getPriceInCent(),
+                request.getTags()
+        );
+        products.add(response);
+        return response;
+    }
 }
