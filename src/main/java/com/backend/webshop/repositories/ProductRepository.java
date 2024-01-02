@@ -62,10 +62,9 @@ public class ProductRepository {
     }
 
     public Optional<ProductResponse> findById(String id) {
-        Optional<ProductResponse> product = products.stream()
+        return products.stream()
                 .filter(p -> p.getId().equals(id))
                 .findFirst();
-        return product;
     }
 
     public void deleteById(String id) {
