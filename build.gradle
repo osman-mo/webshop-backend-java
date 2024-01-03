@@ -1,8 +1,13 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.2.1'
 	id 'io.spring.dependency-management' version '1.1.4'
 	id 'org.jetbrains.kotlin.jvm' version '1.9.22'
+	id 'org.jetbrains.kotlin.plugin.allopen' version '1.9.22'
+	id 'org.jetbrains.kotlin.plugin.spring' version '1.9.22'
+
 }
 
 group = 'com.backend'
@@ -18,8 +23,14 @@ repositories {
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'com.fasterxml.jackson.module:jackson-module-kotlin'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+	implementation 'org.jetbrains.kotlin:kotlin-stdlib'
+	implementation 'org.jetbrains.kotlin:kotlin-reflect'
+}
+
+sourceSets {
+	main.java.srcDirs += 'src/main/kotlin'
 }
 
 tasks.named('test') {
@@ -27,4 +38,11 @@ tasks.named('test') {
 }
 kotlin {
 	jvmToolchain(17)
+}
+
+tasks.withType(KotlinCompile) {
+	kotlinOptions {
+		freeCompilerArgs += '-Xjsr305=strict'
+		jvmTarget = '17'
+	}
 }

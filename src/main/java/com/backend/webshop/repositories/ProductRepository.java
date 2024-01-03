@@ -15,7 +15,7 @@ public class ProductRepository {
     public ProductRepository() {
         products.add(
                 new ProductResponse(
-                        "1",
+                        UUID.randomUUID().toString(),
                         "AMD Ryzen 9 5950X",
                         "very good gpu",
                         79900,
@@ -23,7 +23,7 @@ public class ProductRepository {
                 ));
         products.add(
                 new ProductResponse(
-                        "2",
+                        UUID.randomUUID().toString(),
                         "INtel Core 19-9900KF",
                         "good gpu",
                         33900,
@@ -31,7 +31,7 @@ public class ProductRepository {
                 ));
         products.add(
                 new ProductResponse(
-                        "3",
+                        UUID.randomUUID().toString(),
                         "NVIDIA GeForce GTX 1080 Ti Black Edition 11GB",
                         "very good gpu",
                         74900,
