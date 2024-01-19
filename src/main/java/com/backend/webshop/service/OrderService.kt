@@ -11,10 +11,10 @@ import java.util.*
 
 @Service
 class OrderService(
-        private val orderRepository: OrderRepository,
-        private val orderPositionRepository: OrderPositionRepository,
-        private val customerRepository: CustomerRepository,
-        private val productRepository: ProductRepository
+        val orderRepository: OrderRepository,
+        val orderPositionRepository: OrderPositionRepository,
+        val customerRepository: CustomerRepository,
+        val productRepository: ProductRepository
     )
 {
 
@@ -30,20 +30,17 @@ class OrderService(
             request: CreateOrderPositionRequest
     ): OrderPositionResponse {
 
-        orderRepository.findById(orderId)?:
-            throw Exception("Order not found")
+        orderRepository.findById(orderId) ?: throw Exception("Order not found")
 
-        if(productRepository.findById(request.productId).isEmpty)
-                throw Exception("Product not found")
+        if (productRepository.findById(request.productId).isEmpty)
+            throw Exception("Product not found")
 
         val orderPositionResponse = OrderPositionResponse(
-                id = UUID.randomUUID().toString(),
-                productId = request.productId,
-                quantity = request.quantity
+            id = UUID.randomUUID().toString(),
+            productId = request.productId,
+            quantity = request.quantity
         )
-
         orderPositionRepository.save(orderPositionResponse)
-
         return orderPositionResponse
     }
 

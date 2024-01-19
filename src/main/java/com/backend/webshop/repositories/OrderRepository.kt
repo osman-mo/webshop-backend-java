@@ -4,11 +4,12 @@ import com.backend.webshop.model.CreateOrderRequest
 import com.backend.webshop.model.OrderResponse
 import com.backend.webshop.model.OrderStatus
 import org.springframework.stereotype.Repository
+import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 import java.util.*
 
-@Repository
-class OrderRepository(private val orders: MutableList<OrderResponse>) {
+@Service
+class OrderRepository(val orders: MutableList<OrderResponse>) {
 
 
     fun save(request: CreateOrderRequest): OrderResponse {
