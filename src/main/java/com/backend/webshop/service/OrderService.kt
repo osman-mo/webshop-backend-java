@@ -1,16 +1,13 @@
 package com.backend.webshop.service
 
 import com.backend.webshop.Exceptions.IdNotFoundException
-import com.backend.webshop.Exceptions.WebshopException
 import com.backend.webshop.model.*
 import com.backend.webshop.repositories.CustomerRepository
 import com.backend.webshop.repositories.OrderPositionRepository
 import com.backend.webshop.repositories.OrderRepository
 import com.backend.webshop.repositories.ProductRepository
-import com.fasterxml.jackson.annotation.JsonTypeInfo.Id
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
-import java.lang.Exception
 import java.util.*
 
 @Service
