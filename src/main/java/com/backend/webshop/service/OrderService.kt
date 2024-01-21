@@ -1,10 +1,14 @@
 package com.backend.webshop.service
 
+import com.backend.webshop.Exceptions.IdNotFoundException
+import com.backend.webshop.Exceptions.WebshopException
 import com.backend.webshop.model.*
 import com.backend.webshop.repositories.CustomerRepository
 import com.backend.webshop.repositories.OrderPositionRepository
 import com.backend.webshop.repositories.OrderRepository
 import com.backend.webshop.repositories.ProductRepository
+import com.fasterxml.jackson.annotation.JsonTypeInfo.Id
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
 import java.lang.Exception
 import java.util.*
@@ -19,8 +23,11 @@ class OrderService(
 {
 
     fun createOrder(request: CreateOrderRequest): OrderResponse {
-        val customer: CustomerResponse = customerRepository.findById(request.customerId)
-               ?: throw Exception("Customer not found")
+        val customer = customerRepository.findById(request.customerId)
+               ?: throw IdNotFoundException(
+                   message = "Customer with id ${request.customerId} not found",
+                   statusCode = HttpStatus.BAD_REQUEST
+               )
 
         return orderRepository.save(request)
     }
@@ -30,10 +37,17 @@ class OrderService(
             request: CreateOrderPositionRequest
     ): OrderPositionResponse {
 
-        orderRepository.findById(orderId) ?: throw Exception("Order not found")
+        orderRepository.findById(orderId)
+            ?: throw IdNotFoundException(
+                message = "Order with id $orderId not found",
+                statusCode = HttpStatus.BAD_REQUEST
+            )
 
         if (productRepository.findById(request.productId).isEmpty)
-            throw Exception("Product not found")
+            throw IdNotFoundException(
+                message = "Product with id ${request.productId} not found",
+                statusCode = HttpStatus.BAD_REQUEST
+            )
 
         val orderPositionResponse = OrderPositionResponse(
             id = UUID.randomUUID().toString(),

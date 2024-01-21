@@ -1,9 +1,11 @@
 package com.backend.webshop.controller
 
+import com.backend.webshop.Exceptions.WebshopException
 import com.backend.webshop.model.CreateOrderRequest
 import com.backend.webshop.model.CreateOrderPositionRequest
 import com.backend.webshop.model.OrderResponse
 import com.backend.webshop.service.OrderService
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -17,8 +19,9 @@ class OrderController(
     fun createOrder(
         @RequestBody request: CreateOrderRequest
     ): OrderResponse {
-        return orderService.createOrder(request)
+            return orderService.createOrder(request)
     }
+
     @PostMapping("/orders/{id}/positions")
     fun createOrderPosition(
         @PathVariable(name = "id") orderId: String,
