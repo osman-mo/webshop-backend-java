@@ -3,7 +3,6 @@ package com.backend.webshop.repositories;
 import com.backend.webshop.model.ProductCreateRequest;
 import com.backend.webshop.model.ProductResponse;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RestController;
 
 import java.util.*;
 import java.util.stream.Collectors;

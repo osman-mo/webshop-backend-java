@@ -1,4 +1,4 @@
-package com.backend.estore.Exceptions
+package com.backend.webshop.Exceptions
 
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.http.HttpStatus
