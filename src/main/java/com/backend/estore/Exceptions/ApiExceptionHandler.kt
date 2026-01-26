@@ -1,4 +1,4 @@
-package com.backend.webshop.Exceptions
+package com.backend.estore.Exceptions
 
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.http.HttpStatus
@@ -17,7 +17,7 @@ class ApiExceptionHandler {
 
         val (code, message) = when (exception) {
             is IdNotFoundException -> HttpStatus.BAD_REQUEST to exception.message
-            is WebshopException -> exception.statusCode to exception.message
+            is EstoreException -> exception.statusCode to exception.message
             else -> HttpStatus.INTERNAL_SERVER_ERROR to (exception.message ?: "An error occurred")
         }
 
