@@ -1,7 +1,6 @@
 package com.backend.webshop.repositories
 
 import com.backend.webshop.model.OrderPositionResponse
-import org.springframework.stereotype.Repository
 import org.springframework.stereotype.Service
 
 @Service
@@ -12,4 +11,7 @@ class OrderPositionRepository(
         orderPositions.add(orderPositionResponse)
     }
 
+    fun findAllByOrderIds(orderIds: List<String>): List<OrderPositionResponse> {
+        return orderPositions.filter { orderIds.contains(it.orderId) }
+    }
 }
