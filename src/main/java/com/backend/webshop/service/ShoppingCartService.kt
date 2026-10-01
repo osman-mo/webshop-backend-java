@@ -9,8 +9,10 @@ import com.backend.webshop.repositories.OrderPositionRepository
 import com.backend.webshop.repositories.OrderRepository
 import com.backend.webshop.repositories.ProductRepository
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
+@Transactional(readOnly = true)
 class ShoppingCartService(
     private val orderRepository: OrderRepository,
     private val orderPositionRepository: OrderPositionRepository,

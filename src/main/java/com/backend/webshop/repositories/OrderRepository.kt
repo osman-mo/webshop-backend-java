@@ -1,36 +1,30 @@
 package com.backend.webshop.repositories
 
-import com.backend.webshop.model.CreateOrderRequest
-import com.backend.webshop.model.OrderResponse
-import com.backend.webshop.model.OrderStatus
-import org.springframework.stereotype.Service
+import com.backend.webshop.Exceptions.IdNotFoundException
+import com.backend.webshop.model.*
+import com.backend.webshop.persistence.*
+import org.springframework.stereotype.Repository
+import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
-import java.util.*
+import java.util.UUID
 
-@Service
+@Repository
+@Transactional
 class OrderRepository(
-    private val orders: MutableList<OrderResponse>
+    private val orders: OrderJpaRepository,
+    private val customers: CustomerJpaRepository
 ) {
-
-
     fun save(request: CreateOrderRequest): OrderResponse {
-        val orderResponse = OrderResponse(
-                id = UUID.randomUUID().toString(),
-                customerId = request.customerId,
-                orderTime = LocalDateTime.now(),
-                status = OrderStatus.NEW,
-                orderPositionResponses =  emptyList()
-        )
-
-        orders.add(orderResponse)
-        return orderResponse
+        val customer = customers.findById(request.customerId)
+            .orElseThrow { IdNotFoundException("Customer with id ${request.customerId} not found") }
+        return orders.save(OrderEntity(UUID.randomUUID().toString(), customer,
+            LocalDateTime.now(), OrderStatus.NEW)).toResponse()
     }
 
-    fun findById(orderId: String): OrderResponse? {
-        return orders.find{ it.id == orderId}
-    }
+    @Transactional(readOnly = true)
+    fun findById(orderId: String): OrderResponse? = orders.findById(orderId).orElse(null)?.toResponse()
 
-    fun findAllNewOrdersByCustomerId(customerId: String): List<OrderResponse> {
-        return orders.filter{it.customerId == customerId && it.status == OrderStatus.NEW}
-    }
+    @Transactional(readOnly = true)
+    fun findAllNewOrdersByCustomerId(customerId: String): List<OrderResponse> =
+        orders.findAllByCustomerIdAndStatus(customerId, OrderStatus.NEW).map { it.toResponse() }
 }

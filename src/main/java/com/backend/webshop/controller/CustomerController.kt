@@ -20,11 +20,7 @@ class CustomerController(
             @PathVariable id: String
     ): ResponseEntity<CustomerResponse>
     {
-        val response = customerRepository.findById(id)
-        return if(response != null)
-            ResponseEntity.ok(response)
-        else
-            ResponseEntity.notFound().build()
+        return ResponseEntity.ok(customerRepository.findById(id))
     }
 
     @GetMapping("/customers/{id}/shoppingcart")

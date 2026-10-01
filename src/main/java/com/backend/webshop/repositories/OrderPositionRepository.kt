@@ -1,17 +1,28 @@
 package com.backend.webshop.repositories
 
+import com.backend.webshop.Exceptions.IdNotFoundException
 import com.backend.webshop.model.OrderPositionResponse
-import org.springframework.stereotype.Service
+import com.backend.webshop.persistence.*
+import org.springframework.stereotype.Repository
+import org.springframework.transaction.annotation.Transactional
 
-@Service
+@Repository
+@Transactional
 class OrderPositionRepository(
-        private val orderPositions: MutableList<OrderPositionResponse>
+    private val positions: OrderPositionJpaRepository,
+    private val orders: OrderJpaRepository,
+    private val products: ProductJpaRepository
 ) {
-    fun save(orderPositionResponse: OrderPositionResponse) {
-        orderPositions.add(orderPositionResponse)
+    fun save(position: OrderPositionResponse) {
+        val order = orders.findById(position.orderId)
+            .orElseThrow { IdNotFoundException("Order with id ${position.orderId} not found") }
+        val product = products.findById(position.productId)
+            .orElseThrow { IdNotFoundException("Product with id ${position.productId} not found") }
+        positions.save(OrderPositionEntity(position.id, order, product, position.quantity))
     }
 
-    fun findAllByOrderIds(orderIds: List<String>): List<OrderPositionResponse> {
-        return orderPositions.filter { orderIds.contains(it.orderId) }
-    }
+    @Transactional(readOnly = true)
+    fun findAllByOrderIds(orderIds: List<String>): List<OrderPositionResponse> =
+        if (orderIds.isEmpty()) emptyList()
+        else positions.findAllByOrderIdIn(orderIds).map { it.toResponse() }
 }

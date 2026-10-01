@@ -1,7 +1,7 @@
 package com.backend.webshop.service;
 
 import com.backend.webshop.model.OrderPositionResponse;
-import com.backend.webshop.model.ProductCreateRequest;
+import com.backend.webshop.Exceptions.IdNotFoundException;
 import com.backend.webshop.model.ProductResponse;
 import com.backend.webshop.repositories.OrderPositionRepository;
 import com.backend.webshop.repositories.OrderRepository;
@@ -11,9 +11,13 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class ShoppingCartServiceTest {
 
@@ -21,10 +25,10 @@ public class ShoppingCartServiceTest {
     private ShoppingCartService service;
     @BeforeEach
     public void setupTests(){
-        productRepository = new ProductRepository();
+        productRepository = mock(ProductRepository.class);
         service = new ShoppingCartService(
-                new OrderRepository(new ArrayList<>()),
-                new OrderPositionRepository(new ArrayList<>()),
+                mock(OrderRepository.class),
+                mock(OrderPositionRepository.class),
                 productRepository
         );
     }
@@ -78,14 +82,9 @@ public class ShoppingCartServiceTest {
     }
 
     private ProductResponse getSavedProduct(int price) {
-        ProductResponse savedProduct = productRepository.save(
-                new ProductCreateRequest(
-                        "",
-                        "",
-                        price,
-                        new ArrayList<>()
-                )
-        );
+        ProductResponse savedProduct = new ProductResponse(
+                UUID.randomUUID().toString(), "Test product", "", price, new ArrayList<>());
+        when(productRepository.findById(savedProduct.getId())).thenReturn(Optional.of(savedProduct));
         return savedProduct;
     }
 
@@ -101,7 +100,8 @@ public class ShoppingCartServiceTest {
         List<OrderPositionResponse> orderPositions = new ArrayList<>();
         addOrderPosition(orderPositions, notSavedProduct, 1);
 
-        assertThrows(RuntimeException.class, () -> {
+        when(productRepository.findById(notSavedProduct.getId())).thenReturn(Optional.empty());
+        assertThrows(IdNotFoundException.class, () -> {
             Long result = service.calculateSumForCart(orderPositions, 500);
         });
     }
